@@ -70,6 +70,11 @@ if __name__ == "__main__":
     simulate_gunfight()
 """
 
+
+# Write to the batwing file
+with open(decoded_files[2], "w") as batwing_file:
+    batwing_file.write("The legendary weapon of Batman is ready to strike!")
+
 # Write the decoded shooting code to enemies_shooting.py
 with open(decoded_files[1], "w") as enemies_shooting_file:
     enemies_shooting_file.write(shooting_code)
