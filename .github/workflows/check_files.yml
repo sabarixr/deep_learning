@@ -1,0 +1,43 @@
+name: Check Files on Pull Request
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  check_files:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Check .gitignore and added files
+      id: check_gitignore
+      run: |
+        # Check if .gitignore contains enemies_shooting.py
+        if grep -q "enemies_shooting.py" .gitignore; then
+          echo "Found enemies_shooting.py in .gitignore"
+        else
+          echo "❌ enemies_shooting.py not found in .gitignore"
+          exit 1
+        fi
+
+        # Get the list of added files in the pull request
+        echo "Checking added files..."
+        git fetch origin ${{ github.event.pull_request.base.ref }}
+        added_files=$(git diff --name-status origin/${{ github.event.pull_request.base.ref }}..HEAD | grep '^A' | awk '{print $2}')
+        
+        # Check if batwing.txt is among the added files
+        if echo "$added_files" | grep -q "batwing.txt"; then
+          echo "✅ batwing.txt found in added files!"
+          echo "::set-output name=status::success"
+        else
+          echo "❌ batwing.txt not found in added files."
+          exit 1
+        fi
+
+    - name: Congratulations
+      if: steps.check_gitignore.outputs.status == 'success'
+      run: |
+        echo "🎉 Congratulations! Your pull request meets the requirements!"
