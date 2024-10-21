@@ -47,7 +47,7 @@ jobs:
         if: steps.check_gitignore.outputs.status == 'success'  
         uses: mshick/add-pr-comment@v2
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  
+          GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}  
         with:
           message: |
             ## 🎊 Congratulations, Hero! 🎊
