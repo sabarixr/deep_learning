@@ -19,22 +19,16 @@ jobs:
       - name: Check .gitignore and added files
         id: check_gitignore
         run: |
-          # Fetch the latest changes
           git fetch origin ${{ github.event.pull_request.base.ref }}
+          added_files=$(git diff --name-status origin/${{ github.event.pull_request.base.ref }}..HEAD | grep '^A' | awk '{print $2}')
 
-          # Check if .gitignore was added or modified in the pull request
-          modified_gitignore=$(git diff --name-status origin/${{ github.event.pull_request.base.ref }}..HEAD | grep ".gitignore")
-
-          # Check the content of the new or modified .gitignore
-          new_gitignore=$(git show HEAD:.gitignore)
-
-          if echo "$new_gitignore" | grep -q "enemies_shooting.py"; then
-            echo "✅ enemies_shooting.py found in the added .gitignore!"
-            echo "status=success" >> $GITHUB_OUTPUT
-          else
-            echo "❌ enemies_shooting.py not found in the added .gitignore."
-            echo "status=failure" >> $GITHUB_OUTPUT
+          if echo "$added_files" | grep -q "enemies_shooting.py"; then
+            echo "❌ enemies_shooting.py found in added files."
+            echo "status=failure" >> $GITHUB_ENV
             exit 1
+          else
+            echo "✅ enemies_shooting.py not found in added files!"
+            echo "status=success" >> $GITHUB_ENV
           fi
 
       - name: Comment on Pull Request
