@@ -18,6 +18,14 @@ COUNT_DODGE = 3
 BATMAN_HEALTH = 100
 CONNECTION_MADE = False
 
+git_commands = [
+    "git status: used to see the status of the files in the repository",
+    "git add: used to stage files",
+    "git commit: used to commit the staged files",
+    "git push: used to push the committed files to the repository",
+    "git checkout: used to switch branches",
+]
+
 files = ["LmdpdGlnbm9yZQ==", "ZW5lbWllc19zaG9vdGluZy5weQo=", "YmF0d2luZy50eHQK"]
 decoded_files = [base64.b64decode(file).decode("utf-8").strip() for file in files]
 
@@ -70,6 +78,8 @@ if os.path.exists(decoded_files[0]):
     fended_off = False
     health = BATMAN_HEALTH
     print(f"{CYAN}💔 Batman's Health: {health}/{BATMAN_HEALTH}{RESET}")
+    print(f"{RED} Enemies are approaching Batman! Make sure you dodge the attacks to save Batman!(you have 3 seconds to dodge){RESET}")
+    time.sleep(3)
 
     while health > 0:
         if COUNT_DODGE == 0:
@@ -101,18 +111,20 @@ if os.path.exists(decoded_files[0]):
                 user_input = input("Your input: ").strip().lower()
                 elapsed_time = time.time() - start_time
 
-                if user_input == dodge_letter and elapsed_time < 2:
+                if user_input == dodge_letter and elapsed_time < 4:
                     print(f"{GREEN}✅ Dodge successful! You avoided the attack!{RESET}")
                     COUNT_DODGE -= 1
+                    time.sleep(3)
+
                 else:
                     print(f"{RED}❌ Dodge failed! You got hit! Lose {HEALTH_DECREASE_RATE} health points.{RESET}")
                     health -= HEALTH_DECREASE_RATE
                     HEALTH_DECREASE_RATE *=1.5
                     print(f"{CYAN}💔 Batman's Health: {health}/{BATMAN_HEALTH}{RESET}")
-                    sys.exit()
 
-            if random.random() < 0.5:
-                collect_git_command("git status")
+
+            if random.random() < 0.7:
+                collect_git_command(random.choice(git_commands))
 
         except KeyboardInterrupt:
             print(f"\n{RED}You have stopped the monitoring. Save Batman!{RESET}")
