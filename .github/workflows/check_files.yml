@@ -19,28 +19,22 @@ jobs:
       - name: Check .gitignore and added files
         id: check_gitignore
         run: |
-          # Check if .gitignore contains enemies_shooting.py
-          if grep -q "enemies_shooting.py" .gitignore; then
-            echo "Found enemies_shooting.py in .gitignore"
-          else
-            echo "❌ enemies_shooting.py not found in .gitignore"
-            echo "::set-output name=status::failure"
-            exit 1
-          fi
-
-          # Get the list of added files in the pull request
-          echo "Checking added files..."
+          # Fetch the latest changes
           git fetch origin ${{ github.event.pull_request.base.ref }}
-          added_files=$(git diff --name-status origin/${{ github.event.pull_request.base.ref }}..HEAD | grep '^A' | awk '{print $2}')
-          
-          # Check if enemies_shooting.py is among the added files
-          if echo "$added_files" | grep -q "enemies_shooting.py"; then
-            echo "❌ enemies_shooting.py found in added files."
-            echo "::set-output name=status::failure"
-            exit 1
+
+          # Check if .gitignore was added or modified in the pull request
+          modified_gitignore=$(git diff --name-status origin/${{ github.event.pull_request.base.ref }}..HEAD | grep ".gitignore")
+
+          # Check the content of the new or modified .gitignore
+          new_gitignore=$(git show HEAD:.gitignore)
+
+          if echo "$new_gitignore" | grep -q "enemies_shooting.py"; then
+            echo "✅ enemies_shooting.py found in the added .gitignore!"
+            echo "status=success" >> $GITHUB_OUTPUT
           else
-            echo "✅ enemies_shooting.py not found in added files!"
-            echo "::set-output name=status::success"
+            echo "❌ enemies_shooting.py not found in the added .gitignore."
+            echo "status=failure" >> $GITHUB_OUTPUT
+            exit 1
           fi
 
       - name: Comment on Pull Request
