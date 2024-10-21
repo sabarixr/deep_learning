@@ -32,7 +32,7 @@ jobs:
           fi
 
       - name: Comment on Pull Request
-        if: steps.check_gitignore.outputs.status == 'success'  
+        if: env.status == 'success'  
         uses: mshick/add-pr-comment@v2
         env:
           GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}  
