@@ -1,11 +1,12 @@
 name: Check Files on Pull Request
 
 on:
-  pull_request:
+  pull_request_target:  
     types: [opened, synchronize]
 
 permissions:
-  pull-requests: write  # Grant write access to pull requests
+  pull-requests: write
+  contents: read  
 
 jobs:
   check_files:
@@ -43,15 +44,14 @@ jobs:
           fi
 
       - name: Comment on Pull Request
-        if: steps.check_gitignore.outputs.status == 'success'  # Comment only if checks passed
+        if: steps.check_gitignore.outputs.status == 'success'  
         uses: mshick/add-pr-comment@v2
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Explicitly set the GitHub token
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  
         with:
           message: |
             ## 🎊 Congratulations, Hero! 🎊
-
-          
+            
             Batman reaches the remote from the **🟢 *courier room of the lounge* 🟢**! 🏢✈️
 
             Thank you for your heroic contribution! Keep up the great work! 🚀
