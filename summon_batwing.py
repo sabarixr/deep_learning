@@ -34,6 +34,8 @@ def check_gitignore():
         gitignore_content = gitignore_file.read()
     return "enemies_shooting.py" in gitignore_content
 
+
+
 shooting_code = """
 import time
 import sys
@@ -75,7 +77,12 @@ def collect_git_command(command):
 with open(decoded_files[1], "w") as enemies_shooting_file:
     enemies_shooting_file.write(shooting_code)
 
-print(f"{RED}Disclaimer: Read everything carefully and follow the instructions to save Batman!")
+
+spec = importlib.util.spec_from_file_location("enemies_shooting", decoded_files[1])
+enemies_module = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(enemies_module)
+
+print(f"\n\t{RED}------Disclaimer: Read everything carefully and follow the instructions to save Batman!------\n")
 
 if os.path.exists(decoded_files[0]):
     fended_off = False
@@ -100,9 +107,7 @@ if os.path.exists(decoded_files[0]):
             if check_gitignore() and fended_off:
                 break
 
-            spec = importlib.util.spec_from_file_location("enemies_shooting", decoded_files[1])
-            enemies_module = importlib.util.module_from_spec(spec)
-            spec.loader.exec_module(enemies_module)
+            
 
             value = enemies_module.simulate_gunfight()
             if value == 1:
